@@ -1,0 +1,2 @@
+﻿  stdafx.cpp
+c:\users\krzysztof\documents\visual studio 2010\projects\draw\draw\geometry.h(52): error C2628: 'CRANE_HOOK' followed by 'void' is illegal (did you forget a ';'?)
