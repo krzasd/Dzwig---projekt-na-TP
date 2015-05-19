@@ -130,7 +130,50 @@ CRANE_HOOK::CRANE_HOOK()
 	LinePointCrane.X = 155;
 	LinePointCrane.Y = 59;
 	LinePointHook.X = 155;
-	LinePointHook.Y = 109;
+	LinePointHook.Y = 59;
+	kolor = Color( 0, 255, 0 );
+	Active = false;
+	Attached = false;
+}
+
+void CRANE_HOOK::mooveHook( int przesuniecieX, int przesuniecieY )
+{
+	if ( HookX + przesuniecieX >= 145 && HookY + przesuniecieY >= 59 && HookX + przesuniecieX <= 1310 )
+	{
+		HookX += przesuniecieX;
+		HookY += przesuniecieY;
+		LinePointCrane.X += przesuniecieX;
+		LinePointHook.X += przesuniecieX;
+		LinePointHook.Y += przesuniecieY;
+	}
+}
+
+void CRANE_HOOK::drawHook( HDC hdc )
+{
+	Graphics graphics(hdc);
+	Pen pen( kolor );
+	graphics.DrawLine( &pen, LinePointCrane, LinePointHook );
+	graphics.DrawRectangle( &pen, HookX, HookY, HookWidth, HookHeight );
+}
+
+int CRANE_HOOK::getBottomY()
+{
+	return HookY + HookHeight;
+}
+
+int CRANE_HOOK::getUpperY()
+{
+	return HookY;
+}
+
+int CRANE_HOOK::getLeftX()
+{
+	return HookX;
+}
+
+int CRANE_HOOK::getRightX()
+{
+	return HookX + HookWidth;
 }
 
 void InitTriangles( TRIANGLE* tablicaTrojkatow )

@@ -13,6 +13,7 @@ TCHAR szWindowClass[MAX_LOADSTRING];			// the main window class name
 RECT drawArea = { 145, 59, 1420, 720 };			// non crane rectangle
 TRIANGLE* trojkaty = new TRIANGLE[ ILOSC_TROJKATOW ];
 RECTANGLE* prostokaty = new RECTANGLE[ ILOSC_PROSTOKATOW ];
+CRANE_HOOK Hak;
 	
 
 HWND hwndButton;
@@ -24,8 +25,9 @@ LRESULT CALLBACK	WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK	About(HWND, UINT, WPARAM, LPARAM);
 
 
-void MyOnPaint(HDC hdc)
+void MyOnPaint(HDC hdc )
 {
+	Hak.drawHook( hdc );
 	for ( int i = 0; i < ILOSC_TROJKATOW; ++i )
 		trojkaty[ i ].drawTriangle( hdc, 0, 0 );
 	for ( int i = 0; i < ILOSC_PROSTOKATOW; ++i )
@@ -222,7 +224,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_PAINT:
 		hdc = BeginPaint(hWnd, &ps);
 		// TODO: Add any drawing code here...
-		MyOnPaint(hdc);
+		MyOnPaint( hdc );
 		PaintCrane( hdc );
 		EndPaint(hWnd, &ps);
 		break;
@@ -247,20 +249,79 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			switch( (int)wParam )
 			{
 			case VK_DOWN:
-				trojkaty[ 0 ].SetParameters( trojkaty[ 0 ].getPeakPoint().X, trojkaty[ 0 ].getPeakPoint().Y + 1, 80 );
+				if ( Hak.Active && !Hak.Attached )
+					for ( int i = 0; i < ILOSC_TROJKATOW; ++i )
+					{
+						if ( trojkaty[ i ].getPeakPoint().Y > Hak.getUpperY() && trojkaty[ i ].getPeakPoint().Y < Hak.getBottomY()
+							&& trojkaty[ i ].getPeakPoint().X > Hak.getLeftX() && trojkaty[ i ].getPeakPoint().X < Hak.getRightX() )
+							Hak.Attached = i+1;
+					}
+				if ( Hak.Attached )
+					{
+						trojkaty[ Hak.Attached -1 ].SetParameters( trojkaty[ Hak.Attached -1 ].getPeakPoint().X, 
+							trojkaty[ Hak.Attached -1 ].getPeakPoint().Y + 5, 80 );
+						Hak.mooveHook( 0, 5 );
+					}
+					else
+						Hak.mooveHook( 0, 5 );
 				break;
 			case VK_UP:
-				trojkaty[ 0 ].SetParameters( trojkaty[ 0 ].getPeakPoint().X, trojkaty[ 0 ].getPeakPoint().Y - 1, 80 );
+				if ( Hak.Active && !Hak.Attached )
+					for ( int i = 0; i < ILOSC_TROJKATOW; ++i )
+					{
+						if ( trojkaty[ i ].getPeakPoint().Y > Hak.getUpperY() && trojkaty[ i ].getPeakPoint().Y < Hak.getBottomY()
+							&& trojkaty[ i ].getPeakPoint().X > Hak.getLeftX() && trojkaty[ i ].getPeakPoint().X < Hak.getRightX() )
+							Hak.Attached = i+1;
+					}
+				if ( Hak.Attached && Hak.getUpperY() > 63)
+				{
+					trojkaty[ Hak.Attached -1 ].SetParameters( trojkaty[ Hak.Attached -1 ].getPeakPoint().X, 
+						trojkaty[ Hak.Attached -1 ].getPeakPoint().Y - 5, 80 );
+					Hak.mooveHook( 0, -5 );
+				}
+				else
+					Hak.mooveHook( 0, -5 );
 				break;
 			case VK_LEFT:
-				trojkaty[ 0 ].SetParameters( trojkaty[ 0 ].getPeakPoint().X - 1, trojkaty[ 0 ].getPeakPoint().Y, 80 ); 
+				if ( Hak.Active && !Hak.Attached )
+					for ( int i = 0; i < ILOSC_TROJKATOW; ++i )
+					{
+						if ( trojkaty[ i ].getPeakPoint().Y > Hak.getUpperY() && trojkaty[ i ].getPeakPoint().Y < Hak.getBottomY()
+							&& trojkaty[ i ].getPeakPoint().X > Hak.getLeftX() && trojkaty[ i ].getPeakPoint().X < Hak.getRightX() )
+							Hak.Attached = i+1;
+					}
+				if( Hak.Attached && Hak.getLeftX() > 149 )
+				{
+					trojkaty[ Hak.Attached -1 ].SetParameters( trojkaty[ Hak.Attached -1 ].getPeakPoint().X - 5,
+						trojkaty[ Hak.Attached -1 ].getPeakPoint().Y, 80 ); 
+					Hak.mooveHook( -5, 0 );
+				}
+				else
+					Hak.mooveHook( -5, 0 );
 				break;
 			case VK_RIGHT:
-				trojkaty[ 0 ].SetParameters( trojkaty[ 0 ].getPeakPoint().X + 1, trojkaty[ 0 ].getPeakPoint().Y, 80 ); 
+				if ( Hak.Active && !Hak.Attached )
+					for ( int i = 0; i < ILOSC_TROJKATOW; ++i )
+					{
+						if ( trojkaty[ i ].getPeakPoint().Y > Hak.getUpperY() && trojkaty[ i ].getPeakPoint().Y < Hak.getBottomY()
+							&& trojkaty[ i ].getPeakPoint().X > Hak.getLeftX() && trojkaty[ i ].getPeakPoint().X < Hak.getRightX() )
+							Hak.Attached = i+1;
+					}
+				if ( Hak.Attached && Hak.getRightX() < 1329 )
+				{
+					trojkaty[ Hak.Attached -1 ].SetParameters( trojkaty[ Hak.Attached -1 ].getPeakPoint().X + 5,
+						trojkaty[ Hak.Attached -1 ].getPeakPoint().Y, 80 ); 
+					Hak.mooveHook( 5, 0 );
+				}
+				else
+					Hak.mooveHook( 5, 0 );
 				break;
 			case VK_RETURN:
+				Hak.Attached = 0;
+				Hak.Active = false;
 				break;
 			case VK_SPACE:
+				Hak.Active = true;
 				break;
 			}
 		InvalidateRect(hWnd, &drawArea, TRUE);

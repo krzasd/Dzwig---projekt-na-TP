@@ -45,8 +45,17 @@ private:
 	int HookHeight;
 	PointF LinePointCrane;
 	PointF LinePointHook;
+	Color kolor;
 public:
 	CRANE_HOOK();
+	void mooveHook( int przesuniecieX, int przesuniecieY );
+	void drawHook( HDC hdc );
+	int getBottomY();
+	int getUpperY();
+	int getLeftX();
+	int getRightX();
+	bool Active;
+	int Attached;
 };
 
 void InitTriangles( TRIANGLE* tablicaTrojkatow );
