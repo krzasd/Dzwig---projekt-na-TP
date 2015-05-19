@@ -34,6 +34,8 @@ void MyOnPaint(HDC hdc)
 
 int OnCreate(HWND window)
 {
+   InitTriangles( trojkaty );
+   InitRectangles( prostokaty );
    return 0;
 }
 
@@ -162,8 +164,6 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    SetWindowText( hWnd, L"D¿wig" ); //Set title
    
    OnCreate(hWnd);
-   InitTriangles( trojkaty );
-   InitRectangles( prostokaty );
 
    if (!hWnd)
    {
