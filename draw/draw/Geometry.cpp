@@ -42,6 +42,26 @@ int RECTANGLE::SetParameters( int poczatekX, int poczatekY, int szerokosc, int w
 	return 0;
 }
 
+int RECTANGLE::GetStartPointX()
+{
+	return X;
+}
+
+int RECTANGLE::GetStartPointY()
+{
+	return Y;
+}
+
+int RECTANGLE::GetWidth()
+{
+	return width;
+}
+
+int RECTANGLE::GetHeight()
+{
+	return height;
+}
+
 BOOL RECTANGLE::changePoint( int &przesuniecieX, int &przesuniecieY )
 {
 	X += przesuniecieX;

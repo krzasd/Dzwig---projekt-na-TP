@@ -43,6 +43,11 @@ int OnCreate(HWND window)
    return 0;
 }
 
+/*bool TouchControl( TRIANGLE Trojkat, int numerTrojkata )
+{
+	
+}*/
+
 void ObjectFall( HWND hWnd, HDC hdc )
 {
 	int controlCount = 0;
@@ -50,6 +55,15 @@ void ObjectFall( HWND hWnd, HDC hdc )
 		if ( trojkaty[ i ].getPeakPoint().Y < 610 )
 		{
 			trojkaty[ i ].SetParameters( trojkaty[ i ].getPeakPoint().X, trojkaty[ i ].getPeakPoint().Y + 5, 80 );	
+			controlCount = 0;
+		}
+		else
+			++controlCount;
+	for ( int i = 0; i < prostokaty.size(); ++i )
+		if ( prostokaty[ i ].GetStartPointY() + prostokaty[ i ].GetHeight() < 680 )
+		{
+			prostokaty[ i ].SetParameters( prostokaty[ i ].GetStartPointX(), prostokaty[ i ].GetStartPointY() + 5, 
+											prostokaty[ i ].GetWidth(), prostokaty[ i ].GetHeight() );	
 			controlCount = 0;
 		}
 		else
@@ -70,8 +84,6 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
  	// TODO: Place code here.
 	MSG msg;
 	HACCEL hAccelTable;
-
-//	value= 10;
 
 	GdiplusStartupInput gdiplusStartupInput;
 	ULONG_PTR           gdiplusToken;
@@ -237,10 +249,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			SetFocus( hWnd );
 			break;
 		case ID_BUTTON2:
-			prostokat.SetParameters( 400 + ( 100*( prostokaty.size() + 1 ) )%800, 540, 100, 150 );
+			prostokat.SetParameters( 400 + ( 100*( prostokaty.size() + 1 ) )%800, 240, 50, 75 );
 			prostokaty.push_back( prostokat );
 			InvalidateRect(hWnd, &drawArea, TRUE);
 			hdc = BeginPaint(hWnd, &ps);
+			SetTimer( hWnd, TMR_1, 10, 0 );
 			MyOnPaint( hdc );
 			EndPaint(hWnd, &ps);
 			SetFocus( hWnd );

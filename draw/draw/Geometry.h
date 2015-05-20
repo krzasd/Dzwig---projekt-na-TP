@@ -17,6 +17,10 @@ public:
 	int drawRectangle( HDC hdc, int przesuniecieX, int przesuniecieY );
 	int SetPenColor( int r, int g, int b );
 	int SetParameters( int poczatekX, int poczatekY, int szerokosc, int wysokosc );
+	int GetStartPointX();
+	int GetStartPointY();
+	int GetWidth();
+	int GetHeight();
 };
 
 class TRIANGLE
