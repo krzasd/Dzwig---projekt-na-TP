@@ -36,6 +36,40 @@ public:
 	int SetParameters( int peakX, int peakY, int size );
 };
 
+
+class ELLIPSE
+
+{
+
+private:
+
+	int X;
+
+	int Y;
+
+	int width;
+
+	int height;
+
+	Color kolor;
+
+	BOOL changePoint( int &przesuniecieX, int &przesuniecieY );
+
+public:
+
+	ELLIPSE();
+
+	ELLIPSE( int poczatekX, int poczatekY, int szerokosc, int wysokosc );
+
+	int drawEllipse( HDC hdc, int przesuniecieX, int przesuniecieY );
+
+	int SetPenColor( int r, int g, int b );
+
+	int SetParameters( int poczatekX, int poczatekY, int szerokosc, int wysokosc );
+
+};
+
+
 class PENTAGON
 
 {
@@ -121,3 +155,4 @@ void InitTriangles( TRIANGLE* tablicaTrojkatow );
 void InitRectangles( RECTANGLE* tablicaProstokatow );
 void InitPentagons( PENATAGON* tablicaPieciokatow ); 
 void InitHexagons( HEXAGON* tablicaSzesciokatow ); 
+void InitEllipses( ELLIPSE* tablicaOkregow );
