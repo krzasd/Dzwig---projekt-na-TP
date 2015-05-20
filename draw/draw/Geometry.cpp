@@ -135,6 +135,52 @@ CRANE_HOOK::CRANE_HOOK()
 
 
 /*
+ELLIPSE::ELLIPSE()
+{
+	X = 100;
+	Y = 100;
+	width = 100;
+	height = 100;
+	kolor = Color( 255,123,0,255 );
+}
+
+ELLIPSE::ELLIPSE( float poczatekx, float poczateky, float szerokosc, float wysokosc )
+{
+	X = poczatekx;
+	Y = poczateky;
+	width = szerokosc;
+	height = wysokosc;
+	kolor = Color( 255,123,0,255 );
+}
+
+int ELLIPSE::drawEllipse( HDC hdc, float przesuniecieX, float przesuniecieY )
+{
+	Graphics graphics(hdc);
+	Pen pen( kolor );
+	changePoint( przesuniecieX, przesuniecieY );
+	graphics.DrawEllipse( &pen, X, Y, width, height );
+	return 0;
+}
+
+int ELLIPSE::SetPenColor( int r, int g, int b )
+{
+	kolor = Color( r, g, b );
+	return 0;
+}
+
+int ELLIPSE::SetParameters( float poczatekX, float poczatekY, float szerokosc, float wysokosc )
+{
+	X = poczatekX;
+	Y = poczatekY;
+	width = szerokosc;
+	height = wysokosc;
+	return 0;
+}
+*/
+
+
+
+/*
 PENTAGON::PENTAGON()
 {
 	size = 60;
@@ -355,5 +401,13 @@ void InitHexagons( HEXAGON* tablicaSzesciokatow )
 	for ( int i = 0; i < ILOSC_SZESCIOKATOW; ++i )
 	{
 		tablicaSzesciokatow[ i ].SetParameters( 200 + 80*i, 610, 80 );
+	}
+}
+
+void InitEllipses( HEXAGON* tablicaOkregow )
+{
+	for ( int i = 0; i < ILOSC_OKREGOW; ++i )
+	{
+		tablicaOkregow[ i ].SetParameters( 200 + 80*i, 610, 80 );
 	}
 }
