@@ -120,3 +120,4 @@ public:
 void InitTriangles( TRIANGLE* tablicaTrojkatow );
 void InitRectangles( RECTANGLE* tablicaProstokatow );
 void InitPentagons( PENATAGON* tablicaPieciokatow ); 
+void InitHexagons( HEXAGON* tablicaSzesciokatow ); 
