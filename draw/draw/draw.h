@@ -2,7 +2,7 @@
 
 #include "resource.h"
 
-#define ILOSC_TROJKATOW 3
+#define ILOSC_TROJKATOW 4
 #define ILOSC_PROSTOKATOW 4
 
 #define ID_BUTTON1	200

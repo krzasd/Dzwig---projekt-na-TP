@@ -29,7 +29,6 @@ private:
 public:
 	TRIANGLE();
 	TRIANGLE( int szczytX, int szczytY, int krawedz );
-	~TRIANGLE();
 	int drawTriangle( HDC hdc, int przesuniecieX, int przesuniecieY );
 	int SetPenColor( int r, int g, int b );
 	PointF getPeakPoint();
@@ -58,5 +57,5 @@ public:
 	int Attached;
 };
 
-void InitTriangles( TRIANGLE* tablicaTrojkatow );
-void InitRectangles( RECTANGLE* tablicaProstokatow );
+void InitTriangles( std::vector< TRIANGLE > tablicaTrojkatow );
+void InitRectangles( std::vector< RECTANGLE > tablicaProstokatow );

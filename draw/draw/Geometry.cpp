@@ -73,10 +73,6 @@ TRIANGLE::TRIANGLE( int szczytX, int szczytY, int krawedz )
 	kolor = Color( 255,123,0,255 );
 }
 
-TRIANGLE::~TRIANGLE()
-{
-	delete this;
-}
 
 int TRIANGLE::drawTriangle( HDC hdc, int przesuniecieX, int przesuniecieY )
 {
@@ -176,18 +172,14 @@ int CRANE_HOOK::getRightX()
 	return HookX + HookWidth;
 }
 
-void InitTriangles( TRIANGLE* tablicaTrojkatow )
+void InitTriangles( std::vector < TRIANGLE > tablicaTrojkatow )
 {
-	for ( int i = 0; i < ILOSC_TROJKATOW; ++i )
-	{
+	for ( int i = 0; i < tablicaTrojkatow.size(); ++i )
 		tablicaTrojkatow[ i ].SetParameters( 200 + 80*i, 610, 80 );
-	}
 }
 
-void InitRectangles( RECTANGLE* tablicaProstokatow )
+void InitRectangles( std::vector < RECTANGLE > tablicaProstokatow )
 {
-	for ( int i = 0; i < ILOSC_PROSTOKATOW; ++i )
-	{
-		tablicaProstokatow[ i ].SetParameters( 440 + 150*i, 580, 80, 100 );
-	}
+	for ( int i = 0; i < tablicaProstokatow.size(); ++i )
+		tablicaProstokatow[ i ].SetParameters( 520 + 150*i, 580, 80, 100 );
 }

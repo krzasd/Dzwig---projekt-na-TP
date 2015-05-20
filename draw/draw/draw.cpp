@@ -11,11 +11,13 @@ HINSTANCE hInst;								// current instance
 TCHAR szTitle[MAX_LOADSTRING];					// The title bar text
 TCHAR szWindowClass[MAX_LOADSTRING];			// the main window class name
 RECT drawArea = { 145, 59, 1420, 720 };			// non crane rectangle
-TRIANGLE* trojkaty = new TRIANGLE[ ILOSC_TROJKATOW ];
-RECTANGLE* prostokaty = new RECTANGLE[ ILOSC_PROSTOKATOW ];
+std::vector < TRIANGLE > trojkaty;
+std::vector < RECTANGLE > prostokaty;
 CRANE_HOOK Hak;
 	
-
+short int licznikWiezy = 0;
+TRIANGLE trojkat;
+RECTANGLE prostokat;
 HWND hwndButton;
 
 // Forward declarations of functions included in this code module:
@@ -28,9 +30,9 @@ INT_PTR CALLBACK	About(HWND, UINT, WPARAM, LPARAM);
 void MyOnPaint(HDC hdc )
 {
 	Hak.drawHook( hdc );
-	for ( int i = 0; i < ILOSC_TROJKATOW; ++i )
+	for ( int i = 0; i < trojkaty.size(); ++i )
 		trojkaty[ i ].drawTriangle( hdc, 0, 0 );
-	for ( int i = 0; i < ILOSC_PROSTOKATOW; ++i )
+	for ( int i = 0; i < prostokaty.size(); ++i )
 		prostokaty[ i ].drawRectangle( hdc, 0, 0 );
 }
 
@@ -41,7 +43,21 @@ int OnCreate(HWND window)
    return 0;
 }
 
-
+void ObjectFall( HWND hWnd, HDC hdc )
+{
+	int controlCount = 0;
+	for ( int i = 0; i < trojkaty.size(); ++i )
+		if ( trojkaty[ i ].getPeakPoint().Y < 610 )
+		{
+			trojkaty[ i ].SetParameters( trojkaty[ i ].getPeakPoint().X, trojkaty[ i ].getPeakPoint().Y + 5, 80 );	
+			controlCount = 0;
+		}
+		else
+			++controlCount;
+	MyOnPaint( hdc );
+	if ( controlCount  == trojkaty.size() + prostokaty.size() )
+		KillTimer( hWnd, TMR_1 );
+}
 
 int APIENTRY _tWinMain(HINSTANCE hInstance,
                      HINSTANCE hPrevInstance,
@@ -143,25 +159,25 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    hWnd = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
       CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, NULL, NULL, hInstance, NULL);
 
-   /*hwndButton = CreateWindow(TEXT("button"),                      // The class name required is button
-		TEXT("Start"),                  // the caption of the button
+   hwndButton = CreateWindow(TEXT("button"),                      // The class name required is button
+		TEXT("Add triangle"),                  // the caption of the button
 		WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,  // the styles
 		900, 10,                                  // the left and top co-ordinates
-		80, 20,                              // width and height
+		100, 20,                              // width and height
 		hWnd,                                 // parent window handle
 		(HMENU)ID_BUTTON1,                   // the ID of your button
 		hInstance,                            // the instance of your application
 		NULL);                               // extra bits
 
     hwndButton = CreateWindow(TEXT("button"),                      // The class name required is button
-		TEXT("Stop"),                  // the caption of the button
+		TEXT("Add rectangle"),                  // the caption of the button
 		WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,  // the styles
-		1000, 10,                                  // the left and top co-ordinates
-		80, 20,                              // width and height
+		1030, 10,                                  // the left and top co-ordinates
+		100, 20,                              // width and height
 		hWnd,                                 // parent window handle
 		(HMENU)ID_BUTTON2,                   // the ID of your button
 		hInstance,                            // the instance of your application
-		NULL);                               // extra bits*/
+		NULL);                               // extra bits
 
    SetWindowText( hWnd, L"D¿wig" ); //Set title
    
@@ -211,12 +227,24 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case IDM_EXIT:
 			DestroyWindow(hWnd);
 			break;
-		/*case ID_BUTTON1:
-			SetTimer(hWnd, TMR_1, 10, 0);
+		case ID_BUTTON1:
+			trojkat.SetParameters( 200 + ( 80*( trojkaty.size() + 1 ) )%800, 610, 80 );
+			trojkaty.push_back( trojkat );
+			InvalidateRect(hWnd, &drawArea, TRUE);
+			hdc = BeginPaint(hWnd, &ps);
+			MyOnPaint( hdc );
+			EndPaint(hWnd, &ps);
+			SetFocus( hWnd );
 			break;
 		case ID_BUTTON2:
-			KillTimer( hWnd, TMR_1 );
-			break;*/
+			prostokat.SetParameters( 400 + ( 100*( prostokaty.size() + 1 ) )%800, 540, 100, 150 );
+			prostokaty.push_back( prostokat );
+			InvalidateRect(hWnd, &drawArea, TRUE);
+			hdc = BeginPaint(hWnd, &ps);
+			MyOnPaint( hdc );
+			EndPaint(hWnd, &ps);
+			SetFocus( hWnd );
+		break;
 		default:
 			return DefWindowProc(hWnd, message, wParam, lParam);
 		}
@@ -239,7 +267,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				//force window to repaint
 				InvalidateRect(hWnd, &drawArea, TRUE);
 				hdc = BeginPaint(hWnd, &ps);
-				MyOnPaint( hdc );
+				ObjectFall( hWnd, hdc );
 				EndPaint(hWnd, &ps);
 			break;
 		}
@@ -250,7 +278,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			{
 			case VK_DOWN:
 				if ( Hak.Active && !Hak.Attached )
-					for ( int i = 0; i < ILOSC_TROJKATOW; ++i )
+					for ( int i = 0; i < trojkaty.size(); ++i )
 					{
 						if ( trojkaty[ i ].getPeakPoint().Y > Hak.getUpperY() && trojkaty[ i ].getPeakPoint().Y < Hak.getBottomY()
 							&& trojkaty[ i ].getPeakPoint().X > Hak.getLeftX() && trojkaty[ i ].getPeakPoint().X < Hak.getRightX() )
@@ -267,7 +295,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				break;
 			case VK_UP:
 				if ( Hak.Active && !Hak.Attached )
-					for ( int i = 0; i < ILOSC_TROJKATOW; ++i )
+					for ( int i = 0; i < trojkaty.size(); ++i )
 					{
 						if ( trojkaty[ i ].getPeakPoint().Y > Hak.getUpperY() && trojkaty[ i ].getPeakPoint().Y < Hak.getBottomY()
 							&& trojkaty[ i ].getPeakPoint().X > Hak.getLeftX() && trojkaty[ i ].getPeakPoint().X < Hak.getRightX() )
@@ -284,7 +312,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				break;
 			case VK_LEFT:
 				if ( Hak.Active && !Hak.Attached )
-					for ( int i = 0; i < ILOSC_TROJKATOW; ++i )
+					for ( int i = 0; i < trojkaty.size(); ++i )
 					{
 						if ( trojkaty[ i ].getPeakPoint().Y > Hak.getUpperY() && trojkaty[ i ].getPeakPoint().Y < Hak.getBottomY()
 							&& trojkaty[ i ].getPeakPoint().X > Hak.getLeftX() && trojkaty[ i ].getPeakPoint().X < Hak.getRightX() )
@@ -301,7 +329,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				break;
 			case VK_RIGHT:
 				if ( Hak.Active && !Hak.Attached )
-					for ( int i = 0; i < ILOSC_TROJKATOW; ++i )
+					for ( int i = 0; i < trojkaty.size(); ++i )
 					{
 						if ( trojkaty[ i ].getPeakPoint().Y > Hak.getUpperY() && trojkaty[ i ].getPeakPoint().Y < Hak.getBottomY()
 							&& trojkaty[ i ].getPeakPoint().X > Hak.getLeftX() && trojkaty[ i ].getPeakPoint().X < Hak.getRightX() )
@@ -319,17 +347,18 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			case VK_RETURN:
 				Hak.Attached = 0;
 				Hak.Active = false;
+				SetTimer( hWnd, TMR_1, 10, 0 );
 				break;
 			case VK_SPACE:
 				Hak.Active = true;
 				break;
 			}
+
 		InvalidateRect(hWnd, &drawArea, TRUE);
 		hdc = BeginPaint(hWnd, &ps);
 		MyOnPaint( hdc );
 		EndPaint(hWnd, &ps);
 		break;
-
 	default:
 		return DefWindowProc(hWnd, message, wParam, lParam);
 	}
