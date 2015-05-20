@@ -36,6 +36,39 @@ public:
 	int SetParameters( int peakX, int peakY, int size );
 };
 
+class PENTAGON
+
+{
+
+private:
+	
+	PointF Points[ 5 ];
+	
+	int size;
+	
+	Color kolor;
+	
+	BOOL transferPentagon( int &przesuniecieX, int &przesuniecieY );
+
+public:
+	
+	PENTAGON();
+	
+	PENTAGON( int szczytX, int szczytY, int krawedz );
+	
+	~PENTAGON();
+	
+	int drawPentagon( HDC hdc, int przesuniecieX, int przesuniecieY );
+	
+	int SetPenColor( int r, int g, int b );
+	PointF getPeakPoint();
+	
+	int SetParameters( int peakX, int peakY, int size );
+
+
+};
+
+
 class CRANE_HOOK
 {
 private:
@@ -51,3 +84,4 @@ public:
 
 void InitTriangles( TRIANGLE* tablicaTrojkatow );
 void InitRectangles( RECTANGLE* tablicaProstokatow );
+void InitPentagons( PENATAGON* tablicaPieciokatow ); 
