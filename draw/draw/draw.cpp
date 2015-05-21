@@ -75,26 +75,28 @@ bool NoFallCollision( int i, std::string typ )
 		for ( int j = 0; j < trojkaty.size(); ++j )
 			if ( (i != j) && trojkaty[ i ].getPeakPoint().Y + trojkaty[ i ].GetSize()*1.71/2 > trojkaty[ j ].getPeakPoint().Y -5
 					&& trojkaty[ i ].getPeakPoint().X - trojkaty[ i ].GetSize()/2 < trojkaty[ j ].getPeakPoint().X + trojkaty[ j ].GetSize()/2
-					&& trojkaty[ i ].getPeakPoint().X + trojkaty[ i ].GetSize()/2 > trojkaty[ j ].getPeakPoint().X - trojkaty[ j ].GetSize()/2 )
+					&& trojkaty[ i ].getPeakPoint().X + trojkaty[ i ].GetSize()/2 > trojkaty[ j ].getPeakPoint().X - trojkaty[ j ].GetSize()/2 
+					&& (trojkaty[ i ].getPeakPoint().Y + trojkaty[ i ].GetSize()*1.71/2 - (trojkaty[ j ].getPeakPoint().Y -5)) < 20 )
 			{
-				if ( trojkaty[ i ].lastOnTower )
-					trojkaty[ i ].partOfATower = true;
 				return false;
 			}
 		for ( int j = 0; j < prostokaty.size(); ++j )
 			if ( trojkaty[ i ].getPeakPoint().Y + trojkaty[ i ].GetSize()*1.71/2 > prostokaty[ j ].GetStartPointY()
 					&& trojkaty[ i ].getPeakPoint().X - trojkaty[ i ].GetSize()/2 < prostokaty[ j ].GetStartPointX() + prostokaty[ j ].GetWidth()
-					&& trojkaty[ i ].getPeakPoint().X + trojkaty[ i ].GetSize()/2 > prostokaty[ j ].GetStartPointX() )
+					&& trojkaty[ i ].getPeakPoint().X + trojkaty[ i ].GetSize()/2 > prostokaty[ j ].GetStartPointX()
+					&& (trojkaty[ i ].getPeakPoint().Y + trojkaty[ i ].GetSize()*1.71/2 - (prostokaty[ j ].GetStartPointY())) < 20 )
 				return false;
 		for ( int j = 0; j < kola.size(); ++j )
 			if ( trojkaty[ i ].getPeakPoint().Y + trojkaty[ i ].GetSize()*1.71/2 > kola[ j ].GetStartPointY()
 					&& trojkaty[ i ].getPeakPoint().X - trojkaty[ i ].GetSize()/2 < kola[ j ].GetStartPointX() + kola[ j ].GetWidth()
-					&& trojkaty[ i ].getPeakPoint().X + trojkaty[ i ].GetSize()/2 > kola[ j ].GetStartPointX() )
+					&& trojkaty[ i ].getPeakPoint().X + trojkaty[ i ].GetSize()/2 > kola[ j ].GetStartPointX() 
+					&& (trojkaty[ i ].getPeakPoint().Y + trojkaty[ i ].GetSize()*1.71/2 - (kola[ j ].GetStartPointY() -5)) < 20 )
 				return false;
 		for ( int j = 0; j < pieciokaty.size(); ++j )
 			if ( trojkaty[ i ].getPeakPoint().Y + trojkaty[ i ].GetSize()*1.71/2 > pieciokaty[ j ].getPeakPoint().Y 
 					&& trojkaty[ i ].getPeakPoint().X - trojkaty[ i ].GetSize()/2 < pieciokaty[ j ].getPeakPoint().X + pieciokaty[ j ].GetWidth()/2
-					&& trojkaty[ i ].getPeakPoint().X + trojkaty[ i ].GetSize()/2 > pieciokaty[ j ].getPeakPoint().X - pieciokaty[ j ].GetWidth()/2 )
+					&& trojkaty[ i ].getPeakPoint().X + trojkaty[ i ].GetSize()/2 > pieciokaty[ j ].getPeakPoint().X - pieciokaty[ j ].GetWidth()/2 
+					&& (trojkaty[ i ].getPeakPoint().Y + trojkaty[ i ].GetSize()*1.71/2 - (pieciokaty[ j ].getPeakPoint().Y -5)) < 20 )
 				return false;
 	}
 	if ( typ == "rectangle" )
@@ -102,22 +104,26 @@ bool NoFallCollision( int i, std::string typ )
 		for ( int j = 0; j < trojkaty.size(); ++j )
 			if ( prostokaty[ i ].GetStartPointY() + prostokaty[ i ].GetHeight() > trojkaty[ j ].getPeakPoint().Y 
 					&& prostokaty[ i ].GetStartPointX() < trojkaty[ j ].getPeakPoint().X + trojkaty[ j ].GetSize()/2
-					&& prostokaty[ i ].GetStartPointX() + prostokaty[ i ].GetWidth() > trojkaty[ j ].getPeakPoint().X - trojkaty[ j ].GetSize()/2 )
+					&& prostokaty[ i ].GetStartPointX() + prostokaty[ i ].GetWidth() > trojkaty[ j ].getPeakPoint().X - trojkaty[ j ].GetSize()/2
+					&& (prostokaty[ i ].GetStartPointY() + prostokaty[ i ].GetHeight() - (trojkaty[ j ].getPeakPoint().Y)) < 20 )
 				return false;
 		for ( int j = 0; j < prostokaty.size(); ++j )
 			if ( i != j && prostokaty[ i ].GetStartPointY() + prostokaty[ i ].GetHeight() > prostokaty[ j ].GetStartPointY()
 					&& prostokaty[ i ].GetStartPointX() < prostokaty[ j ].GetStartPointX() + prostokaty[ j ].GetWidth()
-					&& prostokaty[ i ].GetStartPointX() + prostokaty[ i ].GetWidth() > prostokaty[ j ].GetStartPointX() )
+					&& prostokaty[ i ].GetStartPointX() + prostokaty[ i ].GetWidth() > prostokaty[ j ].GetStartPointX() 
+					&& (prostokaty[ i ].GetStartPointY() + prostokaty[ i ].GetHeight() - (prostokaty[ j ].GetStartPointY())) < 20)
 				return false;
 		for ( int j = 0; j < kola.size(); ++j )
 			if ( prostokaty[ i ].GetStartPointY() + prostokaty[ i ].GetHeight() > kola[ j ].GetStartPointY()
 					&& prostokaty[ i ].GetStartPointX() < kola[ j ].GetStartPointX() + kola[ j ].GetWidth()
-					&& prostokaty[ i ].GetStartPointX() + prostokaty[ i ].GetWidth() > kola[ j ].GetStartPointX() )
+					&& prostokaty[ i ].GetStartPointX() + prostokaty[ i ].GetWidth() > kola[ j ].GetStartPointX()
+					&& (prostokaty[ i ].GetStartPointY() + prostokaty[ i ].GetHeight() - (kola[ j ].GetStartPointY())) < 20)
 				return false;
 		for ( int j = 0; j < pieciokaty.size(); ++j )
 			if ( prostokaty[ i ].GetStartPointY() + prostokaty[ i ].GetHeight() > pieciokaty[ j ].getPeakPoint().Y 
 					&& prostokaty[ i ].GetStartPointX() < pieciokaty[ j ].getPeakPoint().X + pieciokaty[ j ].GetWidth()/2
-					&& prostokaty[ i ].GetStartPointX() + prostokaty[ i ].GetWidth() > pieciokaty[ j ].getPeakPoint().X - pieciokaty[ j ].GetWidth()/2 )
+					&& prostokaty[ i ].GetStartPointX() + prostokaty[ i ].GetWidth() > pieciokaty[ j ].getPeakPoint().X - pieciokaty[ j ].GetWidth()/2 
+					&& (prostokaty[ i ].GetStartPointY() + prostokaty[ i ].GetHeight() - (pieciokaty[ j ].getPeakPoint().Y)) < 20)
 				return false;
 	}
 	if ( typ == "ellipse" )
@@ -125,22 +131,26 @@ bool NoFallCollision( int i, std::string typ )
 		for ( int j = 0; j < trojkaty.size(); ++j )
 			if ( kola[ i ].GetStartPointY() + kola[ i ].GetHeight() > trojkaty[ j ].getPeakPoint().Y 
 					&& kola[ i ].GetStartPointX() < trojkaty[ j ].getPeakPoint().X + trojkaty[ j ].GetSize()/2
-					&& kola[ i ].GetStartPointX() + kola[ i ].GetWidth() > trojkaty[ j ].getPeakPoint().X - trojkaty[ j ].GetSize()/2 )
+					&& kola[ i ].GetStartPointX() + kola[ i ].GetWidth() > trojkaty[ j ].getPeakPoint().X - trojkaty[ j ].GetSize()/2 
+					&& (kola[ i ].GetStartPointY() + kola[ i ].GetHeight() - (trojkaty[ j ].getPeakPoint().Y)) < 20)
 				return false;
 		for ( int j = 0; j < prostokaty.size(); ++j )
 			if ( kola[ i ].GetStartPointY() + kola[ i ].GetHeight() > prostokaty[ j ].GetStartPointY()
 					&& kola[ i ].GetStartPointX() < prostokaty[ j ].GetStartPointX() + prostokaty[ j ].GetWidth()
-					&& kola[ i ].GetStartPointX() + kola[ i ].GetWidth() > prostokaty[ j ].GetStartPointX() )
+					&& kola[ i ].GetStartPointX() + kola[ i ].GetWidth() > prostokaty[ j ].GetStartPointX() 
+					&& (kola[ i ].GetStartPointY() + kola[ i ].GetHeight() - (prostokaty[ j ].GetStartPointY())) < 20)
 				return false;
 		for ( int j = 0; j < kola.size(); ++j )
 			if ( (i != j) && kola[ i ].GetStartPointY() + kola[ i ].GetHeight() > kola[ j ].GetStartPointY()
 					&& kola[ i ].GetStartPointX() < kola[ j ].GetStartPointX() + kola[ j ].GetWidth()
-					&& kola[ i ].GetStartPointX() + kola[ i ].GetWidth() > kola[ j ].GetStartPointX() )
+					&& kola[ i ].GetStartPointX() + kola[ i ].GetWidth() > kola[ j ].GetStartPointX() 
+					&& (kola[ i ].GetStartPointY() + kola[ i ].GetHeight() - (kola[ j ].GetStartPointY())) < 20)
 				return false;
 		for ( int j = 0; j < pieciokaty.size(); ++j )
 			if ( kola[ i ].GetStartPointY() + kola[ i ].GetHeight() > pieciokaty[ j ].getPeakPoint().Y 
 					&& kola[ i ].GetStartPointX() < pieciokaty[ j ].getPeakPoint().X + pieciokaty[ j ].GetWidth()/2
-					&& kola[ i ].GetStartPointX() + kola[ i ].GetWidth() > pieciokaty[ j ].getPeakPoint().X - pieciokaty[ j ].GetWidth()/2 )
+					&& kola[ i ].GetStartPointX() + kola[ i ].GetWidth() > pieciokaty[ j ].getPeakPoint().X - pieciokaty[ j ].GetWidth()/2 
+					&& (kola[ i ].GetStartPointY() + kola[ i ].GetHeight() - (pieciokaty[ j ].getPeakPoint().Y)) < 20)
 				return false;
 	}
 	if ( typ == "pentagon" )
@@ -148,22 +158,26 @@ bool NoFallCollision( int i, std::string typ )
 		for ( int j = 0; j < trojkaty.size(); ++j )
 			if ( pieciokaty[ i ].getPeakPoint().Y + pieciokaty[ i ].GetHeight() > trojkaty[ j ].getPeakPoint().Y 
 					&& pieciokaty[ i ].getPeakPoint().X - pieciokaty[ i ].GetWidth()/2 < trojkaty[ j ].getPeakPoint().X + trojkaty[ j ].GetSize()/2
-					&& pieciokaty[ i ].getPeakPoint().X + pieciokaty[ i ].GetWidth()/2 > trojkaty[ j ].getPeakPoint().X - trojkaty[ j ].GetSize()/2 )
+					&& pieciokaty[ i ].getPeakPoint().X + pieciokaty[ i ].GetWidth()/2 > trojkaty[ j ].getPeakPoint().X - trojkaty[ j ].GetSize()/2 
+					&& (pieciokaty[ i ].getPeakPoint().Y + trojkaty[ i ].GetSize()*1.71/2 - (trojkaty[ j ].getPeakPoint().Y -5)) < 20)
 				return false;
 		for ( int j = 0; j < prostokaty.size(); ++j )
 			if ( pieciokaty[ i ].getPeakPoint().Y + pieciokaty[ i ].GetHeight() > prostokaty[ j ].GetStartPointY()
 					&& pieciokaty[ i ].getPeakPoint().X - pieciokaty[ i ].GetWidth()/2 < prostokaty[ j ].GetStartPointX() + prostokaty[ j ].GetWidth()
-					&& pieciokaty[ i ].getPeakPoint().X + pieciokaty[ i ].GetWidth()/2 > prostokaty[ j ].GetStartPointX() )
+					&& pieciokaty[ i ].getPeakPoint().X + pieciokaty[ i ].GetWidth()/2 > prostokaty[ j ].GetStartPointX() 
+					&& (pieciokaty[ i ].getPeakPoint().Y + trojkaty[ i ].GetSize()*1.71/2 - (prostokaty[ j ].GetStartPointY())) < 20)
 				return false;
 		for ( int j = 0; j < kola.size(); ++j )
 			if ( pieciokaty[ i ].getPeakPoint().Y + pieciokaty[ i ].GetHeight() > kola[ j ].GetStartPointY()
 					&& pieciokaty[ i ].getPeakPoint().X - pieciokaty[ i ].GetWidth()/2 < kola[ j ].GetStartPointX() + kola[ j ].GetWidth()
-					&& pieciokaty[ i ].getPeakPoint().X + pieciokaty[ i ].GetWidth()/2 > kola[ j ].GetStartPointX() )
+					&& pieciokaty[ i ].getPeakPoint().X + pieciokaty[ i ].GetWidth()/2 > kola[ j ].GetStartPointX() 
+					&& (pieciokaty[ i ].getPeakPoint().Y + trojkaty[ i ].GetSize()*1.71/2 - (kola[ j ].GetStartPointY())) < 20)
 				return false;
 		for ( int j = 0; j < pieciokaty.size(); ++j )
 			if ( (i != j) && pieciokaty[ i ].getPeakPoint().Y + pieciokaty[ i ].GetHeight() > pieciokaty[ j ].getPeakPoint().Y 
 					&& pieciokaty[ i ].getPeakPoint().X - pieciokaty[ i ].GetWidth()/2 < pieciokaty[ j ].getPeakPoint().X + pieciokaty[ j ].GetWidth()/2
-					&& pieciokaty[ i ].getPeakPoint().X + pieciokaty[ i ].GetWidth()/2 > pieciokaty[ j ].getPeakPoint().X - pieciokaty[ j ].GetWidth()/2 )
+					&& pieciokaty[ i ].getPeakPoint().X + pieciokaty[ i ].GetWidth()/2 > pieciokaty[ j ].getPeakPoint().X - pieciokaty[ j ].GetWidth()/2
+					&& (pieciokaty[ i ].getPeakPoint().Y + trojkaty[ i ].GetSize()*1.71/2 - (pieciokaty[ j ].getPeakPoint().Y -5)) < 20)
 				return false;
 	}
 	return true;
@@ -177,11 +191,6 @@ void ObjectFall( HWND hWnd, HDC hdc )
 		{
 			trojkaty[ i ].SetParameters( trojkaty[ i ].getPeakPoint().X, trojkaty[ i ].getPeakPoint().Y + 5, trojkaty[ i ].GetSize() );	
 			controlCount = 0;
-		}
-		else if ( licznikWiezy > 2 )
-		{
-			trojkaty[ i ].SetParameters( 200, 240, trojkaty[ i ].GetSize() );
-			--licznikWiezy;
 		}
 		else
 			++controlCount;
@@ -221,10 +230,6 @@ void ObjectFall( HWND hWnd, HDC hdc )
 		controlCount);
 	}
 	else*/ 
-	licznikWiezy = 0;
-	for ( int i = 0; i < trojkaty.size(); ++i )
-		if ( trojkaty[ i ].partOfATower )
-			++licznikWiezy;
 	if ( controlCount  == trojkaty.size() + prostokaty.size() + kola.size() + pieciokaty.size() )
 	{
 		KillTimer( hWnd, TMR_1 );
@@ -500,7 +505,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 							&& trojkaty[ i ].getPeakPoint().X > Hak.getLeftX() && trojkaty[ i ].getPeakPoint().X < Hak.getRightX() )
 						{
 							Hak.Attached = i+1;
-							trojkaty[ i ].partOfATower = false;
 						}
 					}
 				if ( Hak.Attached )
@@ -521,7 +525,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 							&& trojkaty[ i ].getPeakPoint().X > Hak.getLeftX() && trojkaty[ i ].getPeakPoint().X < Hak.getRightX() )
 						{
 							Hak.Attached = i+1;
-							trojkaty[ i ].partOfATower = false;
 						}
 					}
 				if ( Hak.Attached && Hak.getUpperY() > 63)
@@ -542,7 +545,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 							&& trojkaty[ i ].getPeakPoint().X > Hak.getLeftX() && trojkaty[ i ].getPeakPoint().X < Hak.getRightX() )
 						{
 							Hak.Attached = i+1;
-							trojkaty[ i ].partOfATower = false;
 						}
 					}
 				if( Hak.Attached && Hak.getLeftX() > 149 )
@@ -563,7 +565,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 							&& trojkaty[ i ].getPeakPoint().X > Hak.getLeftX() && trojkaty[ i ].getPeakPoint().X < Hak.getRightX() )
 						{
 							Hak.Attached = i+1;
-							trojkaty[ i ].partOfATower = false;
 						}
 					}
 				if ( Hak.Attached && Hak.getRightX() < 1329 )
@@ -576,8 +577,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				else
 					Hak.mooveHook( 5, 0 );
 				break;
-			case VK_RETURN:
-				trojkaty[ Hak.Attached - 1 ].lastOnTower = true; 
+			case VK_RETURN: 
 				Hak.Attached = 0;
 				Hak.Active = false;
 				SetTimer( hWnd, TMR_1, 10, 0 );
