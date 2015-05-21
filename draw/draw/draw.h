@@ -7,6 +7,8 @@
 
 #define ID_BUTTON1	200
 #define ID_BUTTON2  201
+#define ID_BUTTON3  202
+#define ID_BUTTON4  203
 
 #define ARROW_DOWN 80
 #define ARROW_UP 72

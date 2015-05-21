@@ -13,11 +13,15 @@ TCHAR szWindowClass[MAX_LOADSTRING];			// the main window class name
 RECT drawArea = { 145, 59, 1420, 720 };			// non crane rectangle
 std::vector < TRIANGLE > trojkaty;
 std::vector < RECTANGLE > prostokaty;
+std::vector < ELLIPSE > kola;
+std::vector < PENTAGON > pieciokaty;
 CRANE_HOOK Hak;
 	
 short int licznikWiezy = 0;
 TRIANGLE trojkat;
 RECTANGLE prostokat;
+ELLIPSE kolo;
+PENTAGON pieciokat;
 HWND hwndButton;
 
 // Forward declarations of functions included in this code module:
@@ -34,6 +38,10 @@ void MyOnPaint(HDC hdc )
 		trojkaty[ i ].drawTriangle( hdc, 0, 0 );
 	for ( int i = 0; i < prostokaty.size(); ++i )
 		prostokaty[ i ].drawRectangle( hdc, 0, 0 );
+	for ( int i = 0; i < kola.size(); ++i )
+		kola[ i ].drawEllipse( hdc, 0, 0 );
+	for ( int i = 0; i < pieciokaty.size(); ++i )
+		pieciokaty[ i ].drawPentagon( hdc, 0, 0 );
 }
 
 int OnCreate(HWND window)
@@ -43,24 +51,142 @@ int OnCreate(HWND window)
    return 0;
 }
 
-/*bool TouchControl( TRIANGLE Trojkat, int numerTrojkata )
+void MessageBoxFormatted(HWND hWnd, LPCTSTR pCaption, LPCTSTR pFormatString, ...)
 {
+    va_list vl;
+    va_start(vl, pFormatString);
+    
+    TCHAR strFormat[1024]; // Must ensure size!
+
+ 
+    // Generic version of vsprintf, works for both MBCS and Unicode builds 
+    _vstprintf(strFormat, pFormatString, vl);
 	
-}*/
+    // Or use following for more secure code
+    // _vstprintf_s(strFormat, sizeof(strFormat), pFormatString, vl)
+
+    ::MessageBox(hWnd, strFormat, pCaption,MB_ICONINFORMATION);
+}
+
+bool NoFallCollision( int i, std::string typ )
+{
+	if ( typ == "triangle" )
+	{
+		for ( int j = 0; j < trojkaty.size(); ++j )
+			if ( (i != j) && trojkaty[ i ].getPeakPoint().Y + trojkaty[ i ].GetSize()*1.71/2 > trojkaty[ j ].getPeakPoint().Y -5
+					&& trojkaty[ i ].getPeakPoint().X - trojkaty[ i ].GetSize()/2 < trojkaty[ j ].getPeakPoint().X + trojkaty[ j ].GetSize()/2
+					&& trojkaty[ i ].getPeakPoint().X + trojkaty[ i ].GetSize()/2 > trojkaty[ j ].getPeakPoint().X - trojkaty[ j ].GetSize()/2 )
+			{
+				if ( trojkaty[ i ].lastOnTower )
+					trojkaty[ i ].partOfATower = true;
+				return false;
+			}
+		for ( int j = 0; j < prostokaty.size(); ++j )
+			if ( trojkaty[ i ].getPeakPoint().Y + trojkaty[ i ].GetSize()*1.71/2 > prostokaty[ j ].GetStartPointY()
+					&& trojkaty[ i ].getPeakPoint().X - trojkaty[ i ].GetSize()/2 < prostokaty[ j ].GetStartPointX() + prostokaty[ j ].GetWidth()
+					&& trojkaty[ i ].getPeakPoint().X + trojkaty[ i ].GetSize()/2 > prostokaty[ j ].GetStartPointX() )
+				return false;
+		for ( int j = 0; j < kola.size(); ++j )
+			if ( trojkaty[ i ].getPeakPoint().Y + trojkaty[ i ].GetSize()*1.71/2 > kola[ j ].GetStartPointY()
+					&& trojkaty[ i ].getPeakPoint().X - trojkaty[ i ].GetSize()/2 < kola[ j ].GetStartPointX() + kola[ j ].GetWidth()
+					&& trojkaty[ i ].getPeakPoint().X + trojkaty[ i ].GetSize()/2 > kola[ j ].GetStartPointX() )
+				return false;
+		for ( int j = 0; j < pieciokaty.size(); ++j )
+			if ( trojkaty[ i ].getPeakPoint().Y + trojkaty[ i ].GetSize()*1.71/2 > pieciokaty[ j ].getPeakPoint().Y 
+					&& trojkaty[ i ].getPeakPoint().X - trojkaty[ i ].GetSize()/2 < pieciokaty[ j ].getPeakPoint().X + pieciokaty[ j ].GetWidth()/2
+					&& trojkaty[ i ].getPeakPoint().X + trojkaty[ i ].GetSize()/2 > pieciokaty[ j ].getPeakPoint().X - pieciokaty[ j ].GetWidth()/2 )
+				return false;
+	}
+	if ( typ == "rectangle" )
+	{
+		for ( int j = 0; j < trojkaty.size(); ++j )
+			if ( prostokaty[ i ].GetStartPointY() + prostokaty[ i ].GetHeight() > trojkaty[ j ].getPeakPoint().Y 
+					&& prostokaty[ i ].GetStartPointX() < trojkaty[ j ].getPeakPoint().X + trojkaty[ j ].GetSize()/2
+					&& prostokaty[ i ].GetStartPointX() + prostokaty[ i ].GetWidth() > trojkaty[ j ].getPeakPoint().X - trojkaty[ j ].GetSize()/2 )
+				return false;
+		for ( int j = 0; j < prostokaty.size(); ++j )
+			if ( i != j && prostokaty[ i ].GetStartPointY() + prostokaty[ i ].GetHeight() > prostokaty[ j ].GetStartPointY()
+					&& prostokaty[ i ].GetStartPointX() < prostokaty[ j ].GetStartPointX() + prostokaty[ j ].GetWidth()
+					&& prostokaty[ i ].GetStartPointX() + prostokaty[ i ].GetWidth() > prostokaty[ j ].GetStartPointX() )
+				return false;
+		for ( int j = 0; j < kola.size(); ++j )
+			if ( prostokaty[ i ].GetStartPointY() + prostokaty[ i ].GetHeight() > kola[ j ].GetStartPointY()
+					&& prostokaty[ i ].GetStartPointX() < kola[ j ].GetStartPointX() + kola[ j ].GetWidth()
+					&& prostokaty[ i ].GetStartPointX() + prostokaty[ i ].GetWidth() > kola[ j ].GetStartPointX() )
+				return false;
+		for ( int j = 0; j < pieciokaty.size(); ++j )
+			if ( prostokaty[ i ].GetStartPointY() + prostokaty[ i ].GetHeight() > pieciokaty[ j ].getPeakPoint().Y 
+					&& prostokaty[ i ].GetStartPointX() < pieciokaty[ j ].getPeakPoint().X + pieciokaty[ j ].GetWidth()/2
+					&& prostokaty[ i ].GetStartPointX() + prostokaty[ i ].GetWidth() > pieciokaty[ j ].getPeakPoint().X - pieciokaty[ j ].GetWidth()/2 )
+				return false;
+	}
+	if ( typ == "ellipse" )
+	{
+		for ( int j = 0; j < trojkaty.size(); ++j )
+			if ( kola[ i ].GetStartPointY() + kola[ i ].GetHeight() > trojkaty[ j ].getPeakPoint().Y 
+					&& kola[ i ].GetStartPointX() < trojkaty[ j ].getPeakPoint().X + trojkaty[ j ].GetSize()/2
+					&& kola[ i ].GetStartPointX() + kola[ i ].GetWidth() > trojkaty[ j ].getPeakPoint().X - trojkaty[ j ].GetSize()/2 )
+				return false;
+		for ( int j = 0; j < prostokaty.size(); ++j )
+			if ( kola[ i ].GetStartPointY() + kola[ i ].GetHeight() > prostokaty[ j ].GetStartPointY()
+					&& kola[ i ].GetStartPointX() < prostokaty[ j ].GetStartPointX() + prostokaty[ j ].GetWidth()
+					&& kola[ i ].GetStartPointX() + kola[ i ].GetWidth() > prostokaty[ j ].GetStartPointX() )
+				return false;
+		for ( int j = 0; j < kola.size(); ++j )
+			if ( (i != j) && kola[ i ].GetStartPointY() + kola[ i ].GetHeight() > kola[ j ].GetStartPointY()
+					&& kola[ i ].GetStartPointX() < kola[ j ].GetStartPointX() + kola[ j ].GetWidth()
+					&& kola[ i ].GetStartPointX() + kola[ i ].GetWidth() > kola[ j ].GetStartPointX() )
+				return false;
+		for ( int j = 0; j < pieciokaty.size(); ++j )
+			if ( kola[ i ].GetStartPointY() + kola[ i ].GetHeight() > pieciokaty[ j ].getPeakPoint().Y 
+					&& kola[ i ].GetStartPointX() < pieciokaty[ j ].getPeakPoint().X + pieciokaty[ j ].GetWidth()/2
+					&& kola[ i ].GetStartPointX() + kola[ i ].GetWidth() > pieciokaty[ j ].getPeakPoint().X - pieciokaty[ j ].GetWidth()/2 )
+				return false;
+	}
+	if ( typ == "pentagon" )
+	{
+		for ( int j = 0; j < trojkaty.size(); ++j )
+			if ( pieciokaty[ i ].getPeakPoint().Y + pieciokaty[ i ].GetHeight() > trojkaty[ j ].getPeakPoint().Y 
+					&& pieciokaty[ i ].getPeakPoint().X - pieciokaty[ i ].GetWidth()/2 < trojkaty[ j ].getPeakPoint().X + trojkaty[ j ].GetSize()/2
+					&& pieciokaty[ i ].getPeakPoint().X + pieciokaty[ i ].GetWidth()/2 > trojkaty[ j ].getPeakPoint().X - trojkaty[ j ].GetSize()/2 )
+				return false;
+		for ( int j = 0; j < prostokaty.size(); ++j )
+			if ( pieciokaty[ i ].getPeakPoint().Y + pieciokaty[ i ].GetHeight() > prostokaty[ j ].GetStartPointY()
+					&& pieciokaty[ i ].getPeakPoint().X - pieciokaty[ i ].GetWidth()/2 < prostokaty[ j ].GetStartPointX() + prostokaty[ j ].GetWidth()
+					&& pieciokaty[ i ].getPeakPoint().X + pieciokaty[ i ].GetWidth()/2 > prostokaty[ j ].GetStartPointX() )
+				return false;
+		for ( int j = 0; j < kola.size(); ++j )
+			if ( pieciokaty[ i ].getPeakPoint().Y + pieciokaty[ i ].GetHeight() > kola[ j ].GetStartPointY()
+					&& pieciokaty[ i ].getPeakPoint().X - pieciokaty[ i ].GetWidth()/2 < kola[ j ].GetStartPointX() + kola[ j ].GetWidth()
+					&& pieciokaty[ i ].getPeakPoint().X + pieciokaty[ i ].GetWidth()/2 > kola[ j ].GetStartPointX() )
+				return false;
+		for ( int j = 0; j < pieciokaty.size(); ++j )
+			if ( (i != j) && pieciokaty[ i ].getPeakPoint().Y + pieciokaty[ i ].GetHeight() > pieciokaty[ j ].getPeakPoint().Y 
+					&& pieciokaty[ i ].getPeakPoint().X - pieciokaty[ i ].GetWidth()/2 < pieciokaty[ j ].getPeakPoint().X + pieciokaty[ j ].GetWidth()/2
+					&& pieciokaty[ i ].getPeakPoint().X + pieciokaty[ i ].GetWidth()/2 > pieciokaty[ j ].getPeakPoint().X - pieciokaty[ j ].GetWidth()/2 )
+				return false;
+	}
+	return true;
+}
 
 void ObjectFall( HWND hWnd, HDC hdc )
 {
 	int controlCount = 0;
 	for ( int i = 0; i < trojkaty.size(); ++i )
-		if ( trojkaty[ i ].getPeakPoint().Y < 610 )
+		if ( (i != (Hak.Attached - 1)) && (trojkaty[ i ].getPeakPoint().Y < 615) && NoFallCollision( i, "triangle" ) )
 		{
-			trojkaty[ i ].SetParameters( trojkaty[ i ].getPeakPoint().X, trojkaty[ i ].getPeakPoint().Y + 5, 80 );	
+			trojkaty[ i ].SetParameters( trojkaty[ i ].getPeakPoint().X, trojkaty[ i ].getPeakPoint().Y + 5, trojkaty[ i ].GetSize() );	
 			controlCount = 0;
+		}
+		else if ( licznikWiezy > 2 )
+		{
+			trojkaty[ i ].SetParameters( 200, 240, trojkaty[ i ].GetSize() );
+			--licznikWiezy;
 		}
 		else
 			++controlCount;
 	for ( int i = 0; i < prostokaty.size(); ++i )
-		if ( prostokaty[ i ].GetStartPointY() + prostokaty[ i ].GetHeight() < 680 )
+		if ( prostokaty[ i ].GetStartPointY() + prostokaty[ i ].GetHeight() < 680 && NoFallCollision( i, "rectangle" ) )
 		{
 			prostokaty[ i ].SetParameters( prostokaty[ i ].GetStartPointX(), prostokaty[ i ].GetStartPointY() + 5, 
 											prostokaty[ i ].GetWidth(), prostokaty[ i ].GetHeight() );	
@@ -68,9 +194,45 @@ void ObjectFall( HWND hWnd, HDC hdc )
 		}
 		else
 			++controlCount;
+	for ( int i = 0; i < kola.size(); ++i )
+		if ( kola[ i ].GetStartPointY() + kola[ i ].GetHeight() < 680 && NoFallCollision( i, "ellipse" ) )
+		{
+			kola[ i ].SetParameters( kola[ i ].GetStartPointX(), kola[ i ].GetStartPointY() + 5, 
+											kola[ i ].GetWidth(), kola[ i ].GetHeight() );	
+			controlCount = 0;
+		}
+		else
+			++controlCount;
+	for ( int i = 0; i < pieciokaty.size(); ++i )
+		if ( pieciokaty[ i ].getPeakPoint().Y < 580 && NoFallCollision( i, "pentagon" ) )
+		{
+			pieciokaty[ i ].SetParameters( pieciokaty[ i ].getPeakPoint().X, pieciokaty[ i ].getPeakPoint().Y + 5, 60 );	
+			controlCount = 0;
+		}
+		else
+			++controlCount;
 	MyOnPaint( hdc );
-	if ( controlCount  == trojkaty.size() + prostokaty.size() )
+	/*if ( Hak.Attached && controlCount >= (trojkaty.size() + prostokaty.size() + kola.size() + pieciokaty.size()) - 1 )
+	{
 		KillTimer( hWnd, TMR_1 );
+		/*MessageBoxFormatted(NULL,  // Or a valid HWND
+		_T("Information"),
+		_T("Age is %d"),
+		controlCount);
+	}
+	else*/ 
+	licznikWiezy = 0;
+	for ( int i = 0; i < trojkaty.size(); ++i )
+		if ( trojkaty[ i ].partOfATower )
+			++licznikWiezy;
+	if ( controlCount  == trojkaty.size() + prostokaty.size() + kola.size() + pieciokaty.size() )
+	{
+		KillTimer( hWnd, TMR_1 );
+		/*MessageBoxFormatted(NULL,  // Or a valid HWND
+		_T("Information"),
+		_T("Age is %d"),
+		licznikWiezy);*/
+	}
 }
 
 int APIENTRY _tWinMain(HINSTANCE hInstance,
@@ -174,7 +336,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    hwndButton = CreateWindow(TEXT("button"),                      // The class name required is button
 		TEXT("Add triangle"),                  // the caption of the button
 		WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,  // the styles
-		900, 10,                                  // the left and top co-ordinates
+		770, 10,                                  // the left and top co-ordinates
 		100, 20,                              // width and height
 		hWnd,                                 // parent window handle
 		(HMENU)ID_BUTTON1,                   // the ID of your button
@@ -184,10 +346,30 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
     hwndButton = CreateWindow(TEXT("button"),                      // The class name required is button
 		TEXT("Add rectangle"),                  // the caption of the button
 		WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,  // the styles
-		1030, 10,                                  // the left and top co-ordinates
+		900, 10,                                  // the left and top co-ordinates
 		100, 20,                              // width and height
 		hWnd,                                 // parent window handle
 		(HMENU)ID_BUTTON2,                   // the ID of your button
+		hInstance,                            // the instance of your application
+		NULL);                               // extra bits
+
+	hwndButton = CreateWindow(TEXT("button"),                      // The class name required is button
+		TEXT("Add circle"),                  // the caption of the button
+		WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,  // the styles
+		1030, 10,                                  // the left and top co-ordinates
+		100, 20,                              // width and height
+		hWnd,                                 // parent window handle
+		(HMENU)ID_BUTTON3,                   // the ID of your button
+		hInstance,                            // the instance of your application
+		NULL);                               // extra bits
+
+	hwndButton = CreateWindow(TEXT("button"),                      // The class name required is button
+		TEXT("Add pentagon"),                  // the caption of the button
+		WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,  // the styles
+		1160, 10,                                  // the left and top co-ordinates
+		100, 20,                              // width and height
+		hWnd,                                 // parent window handle
+		(HMENU)ID_BUTTON4,                   // the ID of your button
 		hInstance,                            // the instance of your application
 		NULL);                               // extra bits
 
@@ -240,10 +422,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			DestroyWindow(hWnd);
 			break;
 		case ID_BUTTON1:
-			trojkat.SetParameters( 200 + ( 80*( trojkaty.size() + 1 ) )%800, 610, 80 );
+			trojkat.SetParameters( 200 + ( 80*( trojkaty.size() + 1 ) )%800, 240, 80 );
 			trojkaty.push_back( trojkat );
 			InvalidateRect(hWnd, &drawArea, TRUE);
 			hdc = BeginPaint(hWnd, &ps);
+			SetTimer( hWnd, TMR_1, 10, 0 );
 			MyOnPaint( hdc );
 			EndPaint(hWnd, &ps);
 			SetFocus( hWnd );
@@ -257,7 +440,27 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			MyOnPaint( hdc );
 			EndPaint(hWnd, &ps);
 			SetFocus( hWnd );
-		break;
+			break;
+		case ID_BUTTON3:
+			kolo.SetParameters( 450 + ( 100*( kola.size() + 1 ) )%800, 240, 50, 75 );
+			kola.push_back( kolo );
+			InvalidateRect(hWnd, &drawArea, TRUE);
+			hdc = BeginPaint(hWnd, &ps);
+			SetTimer( hWnd, TMR_1, 10, 0 );
+			MyOnPaint( hdc );
+			EndPaint(hWnd, &ps);
+			SetFocus( hWnd );
+			break;
+		case ID_BUTTON4:
+			pieciokat.SetParameters( 250 + ( 100*( pieciokaty.size() + 1 ) )%800, 240, 60 );
+			pieciokaty.push_back( pieciokat );
+			InvalidateRect(hWnd, &drawArea, TRUE);
+			hdc = BeginPaint(hWnd, &ps);
+			SetTimer( hWnd, TMR_1, 10, 0 );
+			MyOnPaint( hdc );
+			EndPaint(hWnd, &ps);
+			SetFocus( hWnd );
+			break;
 		default:
 			return DefWindowProc(hWnd, message, wParam, lParam);
 		}
@@ -295,13 +498,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 					{
 						if ( trojkaty[ i ].getPeakPoint().Y > Hak.getUpperY() && trojkaty[ i ].getPeakPoint().Y < Hak.getBottomY()
 							&& trojkaty[ i ].getPeakPoint().X > Hak.getLeftX() && trojkaty[ i ].getPeakPoint().X < Hak.getRightX() )
+						{
 							Hak.Attached = i+1;
+							trojkaty[ i ].partOfATower = false;
+						}
 					}
 				if ( Hak.Attached )
 					{
 						trojkaty[ Hak.Attached -1 ].SetParameters( trojkaty[ Hak.Attached -1 ].getPeakPoint().X, 
-							trojkaty[ Hak.Attached -1 ].getPeakPoint().Y + 5, 80 );
+							trojkaty[ Hak.Attached -1 ].getPeakPoint().Y + 5, trojkaty[ Hak.Attached -1 ].GetSize() );
 						Hak.mooveHook( 0, 5 );
+						SetTimer( hWnd, TMR_1, 10, 0 );
 					}
 					else
 						Hak.mooveHook( 0, 5 );
@@ -312,13 +519,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 					{
 						if ( trojkaty[ i ].getPeakPoint().Y > Hak.getUpperY() && trojkaty[ i ].getPeakPoint().Y < Hak.getBottomY()
 							&& trojkaty[ i ].getPeakPoint().X > Hak.getLeftX() && trojkaty[ i ].getPeakPoint().X < Hak.getRightX() )
+						{
 							Hak.Attached = i+1;
+							trojkaty[ i ].partOfATower = false;
+						}
 					}
 				if ( Hak.Attached && Hak.getUpperY() > 63)
 				{
 					trojkaty[ Hak.Attached -1 ].SetParameters( trojkaty[ Hak.Attached -1 ].getPeakPoint().X, 
-						trojkaty[ Hak.Attached -1 ].getPeakPoint().Y - 5, 80 );
+						trojkaty[ Hak.Attached -1 ].getPeakPoint().Y - 5, trojkaty[ Hak.Attached -1 ].GetSize() );
 					Hak.mooveHook( 0, -5 );
+					SetTimer( hWnd, TMR_1, 10, 0 );
 				}
 				else
 					Hak.mooveHook( 0, -5 );
@@ -329,13 +540,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 					{
 						if ( trojkaty[ i ].getPeakPoint().Y > Hak.getUpperY() && trojkaty[ i ].getPeakPoint().Y < Hak.getBottomY()
 							&& trojkaty[ i ].getPeakPoint().X > Hak.getLeftX() && trojkaty[ i ].getPeakPoint().X < Hak.getRightX() )
+						{
 							Hak.Attached = i+1;
+							trojkaty[ i ].partOfATower = false;
+						}
 					}
 				if( Hak.Attached && Hak.getLeftX() > 149 )
 				{
 					trojkaty[ Hak.Attached -1 ].SetParameters( trojkaty[ Hak.Attached -1 ].getPeakPoint().X - 5,
-						trojkaty[ Hak.Attached -1 ].getPeakPoint().Y, 80 ); 
+						trojkaty[ Hak.Attached -1 ].getPeakPoint().Y, trojkaty[ Hak.Attached -1 ].GetSize() ); 
 					Hak.mooveHook( -5, 0 );
+					SetTimer( hWnd, TMR_1, 10, 0 );
 				}
 				else
 					Hak.mooveHook( -5, 0 );
@@ -346,18 +561,23 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 					{
 						if ( trojkaty[ i ].getPeakPoint().Y > Hak.getUpperY() && trojkaty[ i ].getPeakPoint().Y < Hak.getBottomY()
 							&& trojkaty[ i ].getPeakPoint().X > Hak.getLeftX() && trojkaty[ i ].getPeakPoint().X < Hak.getRightX() )
+						{
 							Hak.Attached = i+1;
+							trojkaty[ i ].partOfATower = false;
+						}
 					}
 				if ( Hak.Attached && Hak.getRightX() < 1329 )
 				{
 					trojkaty[ Hak.Attached -1 ].SetParameters( trojkaty[ Hak.Attached -1 ].getPeakPoint().X + 5,
-						trojkaty[ Hak.Attached -1 ].getPeakPoint().Y, 80 ); 
+						trojkaty[ Hak.Attached -1 ].getPeakPoint().Y, trojkaty[ Hak.Attached -1 ].GetSize() ); 
 					Hak.mooveHook( 5, 0 );
+					SetTimer( hWnd, TMR_1, 10, 0 );
 				}
 				else
 					Hak.mooveHook( 5, 0 );
 				break;
 			case VK_RETURN:
+				trojkaty[ Hak.Attached - 1 ].lastOnTower = true; 
 				Hak.Attached = 0;
 				Hak.Active = false;
 				SetTimer( hWnd, TMR_1, 10, 0 );
