@@ -102,23 +102,3 @@ public:
 	int GetHeight();
 	int SetParameters( int peakX, int peakY, int size );
 };
-
-/*class HEXAGON
-{
-private:	
-	PointF Points[ 6 ];
-	int size;
-	Color kolor;
-	BOOL transferHexagon( int &przesuniecieX, int &przesuniecieY );
-public:
-	HEXAGON();
-	HEXAGON( int szczytX, int szczytY, int krawedz );
-	int drawHexagon( HDC hdc, int przesuniecieX, int przesuniecieY );
-	int SetPenColor( int r, int g, int b );
-	PointF getPeakPoint();
-	int SetParameters( int peakX, int peakY, int size );	
-};*/
-
-
-void InitTriangles( std::vector< TRIANGLE > tablicaTrojkatow );
-void InitRectangles( std::vector< RECTANGLE > tablicaProstokatow );

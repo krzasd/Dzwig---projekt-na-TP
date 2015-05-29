@@ -2,6 +2,9 @@
 
 void PaintCrane( HDC hdc )
 {
+	/*Dzia≥anie funkcji:
+	1. Rysuje düwig
+	*/
 	Graphics graphics( hdc );
 	Pen penCrane1 ( Color( 255, 255, 0 ) );
 	PointF Pt[ 133 ];

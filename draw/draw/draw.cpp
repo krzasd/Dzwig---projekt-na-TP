@@ -33,6 +33,9 @@ INT_PTR CALLBACK	About(HWND, UINT, WPARAM, LPARAM);
 
 void MyOnPaint(HDC hdc )
 {
+	/*Dzia³anie funkcji:
+	1. Rysuje wszystkie obiekty
+	*/
 	Hak.drawHook( hdc );
 	for ( int i = 0; i < trojkaty.size(); ++i )
 		trojkaty[ i ].drawTriangle( hdc, 0, 0 );
@@ -44,32 +47,29 @@ void MyOnPaint(HDC hdc )
 		pieciokaty[ i ].drawPentagon( hdc, 0, 0 );
 }
 
-int OnCreate(HWND window)
-{
-   InitTriangles( trojkaty );
-   InitRectangles( prostokaty );
-   return 0;
-}
-
 void MessageBoxFormatted(HWND hWnd, LPCTSTR pCaption, LPCTSTR pFormatString, ...)
 {
+	/*Dzia³anie funkcji:
+	1. Formatowanie i wyœwietlanie wiadomoœci
+	*/
     va_list vl;
     va_start(vl, pFormatString);
     
-    TCHAR strFormat[1024]; // Must ensure size!
+    TCHAR strFormat[1024];
 
- 
     // Generic version of vsprintf, works for both MBCS and Unicode builds 
     _vstprintf(strFormat, pFormatString, vl);
 	
-    // Or use following for more secure code
-    // _vstprintf_s(strFormat, sizeof(strFormat), pFormatString, vl)
 
     ::MessageBox(hWnd, strFormat, pCaption,MB_ICONINFORMATION);
 }
 
 bool NoFallCollision( int i, std::string typ )
 {
+	/*Dzia³anie funkcji:
+	1. Wykrywa pionowe kolizje obiektów
+	2. Gdy znajdzie kolizjê obiektu zwraca fa³sz 
+	*/
 	if ( typ == "triangle" )
 	{
 		for ( int j = 0; j < trojkaty.size(); ++j )
@@ -185,6 +185,10 @@ bool NoFallCollision( int i, std::string typ )
 
 void ObjectFall( HWND hWnd, HDC hdc )
 {
+	/*Dzia³anie funkcji:
+	1. Bada, czy wszystkie obiekty spad³y juz na ziemiê, b¹dŸ na inne figury
+	2. Je¿eli nie, to dzia³a jak grawitacja i œci¹ga je w dó³
+	*/
 	int controlCount = 0;
 	for ( int i = 0; i < trojkaty.size(); ++i )
 		if ( (i != (Hak.Attached - 1)) && (trojkaty[ i ].getPeakPoint().Y < 615) && NoFallCollision( i, "triangle" ) )
@@ -221,23 +225,34 @@ void ObjectFall( HWND hWnd, HDC hdc )
 		else
 			++controlCount;
 	MyOnPaint( hdc );
-	/*if ( Hak.Attached && controlCount >= (trojkaty.size() + prostokaty.size() + kola.size() + pieciokaty.size()) - 1 )
-	{
-		KillTimer( hWnd, TMR_1 );
-		/*MessageBoxFormatted(NULL,  // Or a valid HWND
-		_T("Information"),
-		_T("Age is %d"),
-		controlCount);
-	}
-	else*/ 
+	
 	if ( controlCount  == trojkaty.size() + prostokaty.size() + kola.size() + pieciokaty.size() )
-	{
 		KillTimer( hWnd, TMR_1 );
-		/*MessageBoxFormatted(NULL,  // Or a valid HWND
-		_T("Information"),
-		_T("Age is %d"),
-		licznikWiezy);*/
-	}
+}
+
+void TowerControl( HWND hWnd, HDC hdc )
+{
+	/*Dzia³anie funkcji:
+	1.Bada, czy gdzieœ nie powsta³a wie¿a z 3 trójk¹tów
+	2.Jeœli tak sie sta³o, to ostatni element przemieszcza w pocz¹tek uk³adu
+	*/
+	for ( int i = 0; i < trojkaty.size(); ++i )
+		for ( int j = 0; j < trojkaty.size(); ++j )
+			if ( i !=j && ( trojkaty[ j ].getPeakPoint().X - trojkaty[ j ].GetSize()/2 < trojkaty[ i ].getPeakPoint().X + trojkaty[ i ].GetSize()/2
+				&& trojkaty[ j ].getPeakPoint().X + trojkaty[ j ].GetSize()/2 > trojkaty[ i ].getPeakPoint().X - trojkaty[ i ].GetSize()/2 )
+				&& trojkaty[ j ].getPeakPoint().Y < trojkaty[ i ].getPeakPoint().Y + trojkaty[ i ].GetSize()*1.71/2 +20
+				&& trojkaty[ j ].getPeakPoint().Y > trojkaty[ i ].getPeakPoint().Y + trojkaty[ i ].GetSize()*1.71/2 -20 )
+				for ( int k = 0; k < trojkaty.size(); ++k )
+					if ( k != j && k != i 
+						&& ( trojkaty[ k ].getPeakPoint().X - trojkaty[ k ].GetSize()/2 < trojkaty[ j ].getPeakPoint().X + trojkaty[ j ].GetSize()/2
+						&& trojkaty[ k ].getPeakPoint().X + trojkaty[ k ].GetSize()/2 > trojkaty[ j ].getPeakPoint().X - trojkaty[ j ].GetSize()/2 )
+						&& trojkaty[ k ].getPeakPoint().Y < trojkaty[ j ].getPeakPoint().Y + trojkaty[ j ].GetSize()*1.71/2 +20
+						&& trojkaty[ k ].getPeakPoint().Y > trojkaty[ j ].getPeakPoint().Y + trojkaty[ j ].GetSize()*1.71/2 -20
+						&& Hak.Attached == 0 )
+					{
+						trojkaty[ i ].SetParameters( 200, 100, trojkaty[ i ].GetSize() );
+					}
+	ObjectFall( hWnd, hdc );
 }
 
 int APIENTRY _tWinMain(HINSTANCE hInstance,
@@ -379,8 +394,6 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 		NULL);                               // extra bits
 
    SetWindowText( hWnd, L"D¿wig" ); //Set title
-   
-   OnCreate(hWnd);
 
    if (!hWnd)
    {
@@ -471,6 +484,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 		break;
 	case WM_PAINT:
+		/*Dzia³anie:
+			1.Pocz¹tkowe malowanie, w tym dŸwigu
+		*/
 		hdc = BeginPaint(hWnd, &ps);
 		// TODO: Add any drawing code here...
 		MyOnPaint( hdc );
@@ -485,10 +501,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		switch (wParam)
 		{
 			case TMR_1:
-				//force window to repaint
+				/*Dzia³anie
+					1. Uruchamia grawitacjê
+					2. Uruchamia sprawdzanie wie¿y
+				*/
 				InvalidateRect(hWnd, &drawArea, TRUE);
 				hdc = BeginPaint(hWnd, &ps);
 				ObjectFall( hWnd, hdc );
+				TowerControl( hWnd, hdc );
 				EndPaint(hWnd, &ps);
 			break;
 		}
@@ -498,6 +518,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			switch( (int)wParam )
 			{
 			case VK_DOWN:
+				/*Dzia³anie:
+				1. Przesuwa hak w dó³
+				2. Jak hak jest aktywny i natrafi na trójk¹t, to przyczepia obiekt do haka
+				3. Jeœli coœ jest przyczepione do haka, to przesuwa to razem z nim
+				*/
 				if ( Hak.Active && !Hak.Attached )
 					for ( int i = 0; i < trojkaty.size(); ++i )
 					{
@@ -518,6 +543,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 						Hak.mooveHook( 0, 5 );
 				break;
 			case VK_UP:
+				/*Dzia³anie:
+				1. Przesuwa hak w górê
+				2. Jak hak jest aktywny i natrafi na trójk¹t, to przyczepia obiekt do haka
+				3. Jeœli coœ jest przyczepione do haka, to przesuwa to razem z nim
+				*/
 				if ( Hak.Active && !Hak.Attached )
 					for ( int i = 0; i < trojkaty.size(); ++i )
 					{
@@ -538,6 +568,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 					Hak.mooveHook( 0, -5 );
 				break;
 			case VK_LEFT:
+				/*Dzia³anie:
+				1. Przesuwa hak w lewo
+				2. Jak hak jest aktywny i natrafi na trójk¹t, to przyczepia obiekt do haka
+				3. Jeœli coœ jest przyczepione do haka, to przesuwa to razem z nim
+				*/
 				if ( Hak.Active && !Hak.Attached )
 					for ( int i = 0; i < trojkaty.size(); ++i )
 					{
@@ -558,6 +593,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 					Hak.mooveHook( -5, 0 );
 				break;
 			case VK_RIGHT:
+				/*Dzia³anie:
+				1. Przesuwa hak w prawo
+				2. Jak hak jest aktywny i natrafi na trójk¹t, to przyczepia obiekt do haka
+				3. Jeœli coœ jest przyczepione do haka, to przesuwa to razem z nim
+				*/
 				if ( Hak.Active && !Hak.Attached )
 					for ( int i = 0; i < trojkaty.size(); ++i )
 					{
@@ -578,11 +618,19 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 					Hak.mooveHook( 5, 0 );
 				break;
 			case VK_RETURN: 
+				/*Dzia³anie:
+					1. Odczepia obiekt od haka
+					2. Dezaktywuje hak
+					3. Uruchamia timer
+				*/
 				Hak.Attached = 0;
 				Hak.Active = false;
 				SetTimer( hWnd, TMR_1, 10, 0 );
 				break;
 			case VK_SPACE:
+				/*Dzia³anie: 
+					1. Uaktywnia hak
+				*/
 				Hak.Active = true;
 				break;
 			}
