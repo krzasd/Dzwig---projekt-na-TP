@@ -241,17 +241,23 @@ void TowerControl( HWND hWnd, HDC hdc )
 			if ( i !=j && ( trojkaty[ j ].getPeakPoint().X - trojkaty[ j ].GetSize()/2 < trojkaty[ i ].getPeakPoint().X + trojkaty[ i ].GetSize()/2
 				&& trojkaty[ j ].getPeakPoint().X + trojkaty[ j ].GetSize()/2 > trojkaty[ i ].getPeakPoint().X - trojkaty[ i ].GetSize()/2 )
 				&& trojkaty[ j ].getPeakPoint().Y < trojkaty[ i ].getPeakPoint().Y + trojkaty[ i ].GetSize()*1.71/2 +20
-				&& trojkaty[ j ].getPeakPoint().Y > trojkaty[ i ].getPeakPoint().Y + trojkaty[ i ].GetSize()*1.71/2 -20 )
+				&& trojkaty[ j ].getPeakPoint().Y > trojkaty[ i ].getPeakPoint().Y + trojkaty[ i ].GetSize()*1.71/2 -20 
+				&& Hak.Attached == 0 )
 				for ( int k = 0; k < trojkaty.size(); ++k )
 					if ( k != j && k != i 
 						&& ( trojkaty[ k ].getPeakPoint().X - trojkaty[ k ].GetSize()/2 < trojkaty[ j ].getPeakPoint().X + trojkaty[ j ].GetSize()/2
 						&& trojkaty[ k ].getPeakPoint().X + trojkaty[ k ].GetSize()/2 > trojkaty[ j ].getPeakPoint().X - trojkaty[ j ].GetSize()/2 )
 						&& trojkaty[ k ].getPeakPoint().Y < trojkaty[ j ].getPeakPoint().Y + trojkaty[ j ].GetSize()*1.71/2 +20
-						&& trojkaty[ k ].getPeakPoint().Y > trojkaty[ j ].getPeakPoint().Y + trojkaty[ j ].GetSize()*1.71/2 -20
-						&& Hak.Attached == 0 )
-					{
-						trojkaty[ i ].SetParameters( 200, 100, trojkaty[ i ].GetSize() );
-					}
+						&& trojkaty[ k ].getPeakPoint().Y > trojkaty[ j ].getPeakPoint().Y + trojkaty[ j ].GetSize()*1.71/2 -20 )
+						for ( int m = 0; m < trojkaty.size(); ++m )
+							if ( m != j && m != i && m != k 
+								&& ( trojkaty[ m ].getPeakPoint().X - trojkaty[ m ].GetSize()/2 < trojkaty[ k ].getPeakPoint().X + trojkaty[ k ].GetSize()/2
+								&& trojkaty[ m ].getPeakPoint().X + trojkaty[ m ].GetSize()/2 > trojkaty[ k ].getPeakPoint().X - trojkaty[ k ].GetSize()/2 )
+								&& trojkaty[ m ].getPeakPoint().Y < trojkaty[ k ].getPeakPoint().Y + trojkaty[ k ].GetSize()*1.71/2 +20
+								&& trojkaty[ m ].getPeakPoint().Y > trojkaty[ k ].getPeakPoint().Y + trojkaty[ k ].GetSize()*1.71/2 -20 )
+							{
+								trojkaty[ i ].SetParameters( 200, 100, trojkaty[ i ].GetSize() );
+							}
 	ObjectFall( hWnd, hdc );
 }
 
